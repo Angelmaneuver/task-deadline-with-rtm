@@ -1,0 +1,14 @@
+# ignore node dependency directories
+node_modules/
+
+# ignore temporary compilation result file.
+dist/
+out/
+
+# ignore log files and databases
+*.log
+*.sql
+*.sqlite
+
+# ignore os manage files
+.DS_Store
