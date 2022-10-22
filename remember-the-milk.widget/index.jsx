@@ -251,8 +251,6 @@ function getTasks(rtm, props, dispatch){
 						const data  = [];
 						const lists = listsJson.rsp.lists.list;
 
-						console.log(tasksJson.rsp.tasks.list);
-
 						for (const list of tasksJson.rsp.tasks.list) {
 							const name = lists.filter((element) => {
 								return list.id === element.id;
@@ -284,10 +282,6 @@ function getTasks(rtm, props, dispatch){
 
 									return className;
 								})();
-
-								console.log(due);
-
-
 
 								taskSeries.push(
 									<Component.Molecuels.Task
