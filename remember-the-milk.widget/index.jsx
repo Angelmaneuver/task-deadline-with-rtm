@@ -17,7 +17,7 @@ const DESCRIPTION             = {
 	DATE:    {
 		YEAR:    '年',
 		MONTH:   '月',
-		DAY:     '日',
+		DAY:     '日 ',
 		HOUR:    '時',
 		MINUTES: '分',
 		SECONDS: '秒',
@@ -259,38 +259,55 @@ function getTasks(rtm, props, dispatch){
 							const taskSeries = [];
 
 							for (const task of list.taskseries) {
-								const due       = new Date(task.task[0].due);
-								const year      = `${due.getFullYear().toString()}${DESCRIPTION.DATE.YEAR}`;
-								const month     = `${(due.getMonth() + 1).toString().padStart(2, '0')}${DESCRIPTION.DATE.MONTH}`;
-								const date      = `${due.getDate().toString().padStart(2, '0')}${DESCRIPTION.DATE.DAY}`;
-								const hour      = `${due.getHours().toString().padStart(2, '0')}${DESCRIPTION.DATE.HOUR}`;
-								const minutes   = `${due.getMinutes().toString().padStart(2, '0')}${DESCRIPTION.DATE.MINUTES}`;
-
-								let   className = (() => {
-									let   className = undefined
-									const now       = new Date();
-									const red       = new Date(due.getTime()).setHours(-RED_ZONE);
-									const yellow    = new Date(due.getTime()).setHours(-YELLOW_ZONE);
-
-									if (yellow <= now) {
-										className = 'yellow-zone';
+								const due = (() => {
+									if (task.task[0].due && 'string' === typeof task.task[0].due && 0 < task.task[0].due.length) {
+										return new Date(task.task[0].due);
+									} else {
+										return undefined;
 									}
-
-									if (red <= now) {
-										className = 'red-zone';
-									}
-
-									return className;
 								})();
 
-								taskSeries.push(
-									<Component.Molecuels.Task
-										className   = { className }
-										key         = { task.name }
-										description = { task.name }
-										deadline    = { `${year}${month}${date}${hour}${minutes}` }
-									/>
-								);
+								if (due) {
+									const year      = `${due.getFullYear().toString()}${DESCRIPTION.DATE.YEAR}`;
+									const month     = `${(due.getMonth() + 1).toString().padStart(2, '0')}${DESCRIPTION.DATE.MONTH}`;
+									const date      = `${due.getDate().toString().padStart(2, '0')}${DESCRIPTION.DATE.DAY}`;
+									const hour      = `${due.getHours().toString().padStart(2, '0')}${DESCRIPTION.DATE.HOUR}`;
+									const minutes   = `${due.getMinutes().toString().padStart(2, '0')}${DESCRIPTION.DATE.MINUTES}`;
+	
+									let   className = (() => {
+										let   className = undefined
+										const now       = new Date();
+										const red       = new Date(due.getTime()).setHours(-RED_ZONE);
+										const yellow    = new Date(due.getTime()).setHours(-YELLOW_ZONE);
+	
+										if (yellow <= now) {
+											className = 'yellow-zone';
+										}
+	
+										if (red <= now) {
+											className = 'red-zone';
+										}
+	
+										return className;
+									})();
+	
+									taskSeries.push(
+										<Component.Molecuels.Task
+											className   = { className }
+											key         = { task.name }
+											description = { task.name }
+											deadline    = { `${year}${month}${date}${hour}${minutes}` }
+										/>
+									);
+								} else {
+									taskSeries.push(
+										<Component.Molecuels.Task
+											className   = { className }
+											key         = { task.name }
+											description = { task.name }
+										/>
+									);
+								}
 							}
 
 							data.push({ name: name, tasks: taskSeries });
