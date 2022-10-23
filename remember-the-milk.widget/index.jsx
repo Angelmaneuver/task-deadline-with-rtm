@@ -277,7 +277,7 @@ function getTasks(rtm, props, dispatch){
 									}
 
 									if (red >= now) {
-										className = 'red';
+										className = 'red-zone';
 									}
 
 									return className;
