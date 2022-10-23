@@ -272,11 +272,11 @@ function getTasks(rtm, props, dispatch){
 									const red       = new Date(due.getTime()).setHours(-RED_ZONE);
 									const yellow    = new Date(due.getTime()).setHours(-YELLOW_ZONE);
 
-									if (yellow >= now) {
+									if (yellow <= now) {
 										className = 'yellow-zone';
 									}
 
-									if (red >= now) {
+									if (red <= now) {
 										className = 'red-zone';
 									}
 
