@@ -1,28 +1,28 @@
-import { css } from 'uebersicht';
+import { css }    from 'uebersicht';
+import * as Atoms from '../../atoms'
 
 const Information = ({ className, style, children }) => {
 	return (
 		<div
 			className = { `${ className ? className : '' } ${baseStyle(style)}`.trim() }
 		>
-			{ children }
+			<div>{ children }</div>
 		</div>
 	);
 }
 
 const baseStyle   = (style) => css`
-	font-style:     italic;
-	color:          rgba(230,230,230,.8);
-	text-shadow:    #00BFFF 0.1em  0.1em 1em, #00BFFF -0.1em  0.1em 1em,
-				    #00BFFF 0.1em -0.1em 1em, #00BFFF -0.1em -0.1em 1em;
-	text-align:     center;
+	position:        relative;
+	height:          100vh;
 
-	&.error {
-		text-shadow:    #DC143C 0.1em  0.1em 1em, #DC143C -0.1em  0.1em 1em,
-						#DC143C 0.1em -0.1em 1em, #DC143C -0.1em -0.1em 1em;
-		text-align:     left;
+	div {
+		position:    absolute;
+		top:         50%;
+		left:        50%;
+		transform:   translate(-50%,-50%);
 	}
 
+	${Atoms.Style.fontColor}
 	${style}
 `;
 

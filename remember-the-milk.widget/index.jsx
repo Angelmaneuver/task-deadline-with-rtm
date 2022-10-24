@@ -1,45 +1,38 @@
 import { RTM }        from './lib/libraries.bundle';
+import * as Language  from './lib/description';
 import * as Component from './lib/components';
 
 const API_KEY                 = ``;
 const API_SECRET              = ``;
 const AUTH_TOKEN              = ``;
 
-const RED_ZONE                = 24 * 1;
-const YELLOW_ZONE             = 7 * 24 * 1;
+const DESCRIPTION             = Language.EN;
+
+const RED_ZONE                = 2;
+const YELLOW_ZONE             = 7;
 
 export const className        = `
-	top:  0;
-	left: 0;
+	top:        0;
+	left:       0;
+	font-style: italic;
+
+	> div > div:nth-child(2) > div:last-child > div:not(:first-child) > div:first-child:before {
+		display: none;
+	}
 `;
 
-const DESCRIPTION             = {
-	DATE:    {
-		YEAR:    '年',
-		MONTH:   '月',
-		DAY:     '日 ',
-		HOUR:    '時',
-		MINUTES: '分',
-		SECONDS: '秒',
-	},
-	STARTUP: '起動中です...',
-	SETUP:   {
-		INFORMATION: 'セットアップ手順',
-		STEP1:       {
-			'1':    `Step.1`,
-			'2':    `以下の URL をブラウザにコピー (⌘ + c) して remember the milk 公式サイトにアクセスし、貴方のアカウントへのアクセスを許可してください。`,
-		},
-		STEP2:       {
-			'1':    `Step.2`,
-			'2':    `アクセスを許可したら、『トークンを取得する』ボタンを押下してください。`,
-			'text': `トークンを取得する`
-		},
-		STEP3:       {
-			'1':    `Step.3`,
-			'2':    `トークンが取得できました。トークンをコピー (⌘ + c) して、このウィジェットの JavaScript 内変数『AUTH_TOKEN』に貼り付けて再起動してください。`,
-		},
-	}
-}
+const mainStyle               = {
+	minHeight:     '58vh',
+	maxHeight:     '58vh',
+	width:         '55vw',
+	padding:       '1em',
+	margin:        '0.3em',
+
+	flexDirection: 'column',
+	overflowY:     'scroll',
+	overflowX:     'hidden',
+	background:    'rgba(51,49,50,.65)',
+};
 
 const STATUS                  = {
 	STARTUP:       'RTL/STARTUP',
@@ -90,7 +83,7 @@ export const render           = (props, dispatch) => {
 	if (props.warning) {
 		main = (
 			<Component.Molecuels.Information
-				className = { `error` }
+				className = { `red` }
 			>
 				{ props.warning }
 			</Component.Molecuels.Information>
@@ -98,7 +91,9 @@ export const render           = (props, dispatch) => {
 	} else {
 		if (STATUS.STARTUP === props.type) {
 			main = (
-				<Component.Molecuels.Information>
+				<Component.Molecuels.Information
+					className = { `blue` }
+				>
 					{ DESCRIPTION.STARTUP }
 				</Component.Molecuels.Information>
 			);
@@ -154,19 +149,39 @@ export const render           = (props, dispatch) => {
 				/>
 			);
 		} else if (STATUS.ACTIVE === props.type) {
-			main = (
-				props.data.map((item) => (
-					<Component.Molecuels.List
-						key   = { item.name }
-						name  = { item.name }
-						style = {{
-							marginBottom: '0.5em',
-						}}
-					>
-						{ item.tasks }
-					</Component.Molecuels.List>
-				))
-			);
+			const data = props.data;
+
+			if (0 === Object.keys(data).length) {
+				main = (
+					<Component.Molecuels.Information>
+						{ DESCRIPTION.NO_DATA }
+					</Component.Molecuels.Information>
+				);
+			} else {
+				main = (
+					data.map((record) => {
+						const color = 'color' in record ? record.color : undefined;
+
+						return (
+							<Component.Atoms.Row
+								key   = { record.headline }
+								style = {{
+									flexDirection: 'column',
+								}}
+							>
+								<Component.Molecuels.Timeline.Headline
+									date  = { record.headline }
+									color = { color }
+								/>
+								<Component.Molecuels.Timeline.Detail
+									datetimes = { record.datetimes }
+									color     = { color }
+								/>
+							</Component.Atoms.Row>
+						);
+					})
+				);
+			}
 		}
 	}
 
@@ -176,18 +191,7 @@ export const render           = (props, dispatch) => {
 				onClickReload = { () => { init(dispatch); } }
 			/>
 			<Component.Atoms.Row
-				style = {{
-					minHeight:     '60vh',
-					maxHeight:     '60vh',
-					width:         '55vw',
-					padding:       '0.3em',
-					margin:        '0.3em',
-				
-					flexDirection: 'column',
-					overflowY:     'scroll',
-					overflowX:     'hidden',
-					background:    'rgba(51,49,50,.65)',
-				}}
+				style = { mainStyle }
 			>
 				{ main }
 			</Component.Atoms.Row>
@@ -234,99 +238,19 @@ function getTasks(rtm, props, dispatch){
 		const checkToken = JSON.parse(data);
 
 		if (RTM_STATUS.OK === checkToken.rsp.stat) {
-			$.when(
-				$.get(rtm.getUrl('rtm.lists.getList')),
-				$.get(rtm.getUrl('rtm.tasks.getList', { filter: 'status:incomplete' })),
-			).done(
-				(listsResponse, tasksResponse) => {
-					const listsJson = JSON.parse(listsResponse[0]);
-					const tasksJson = JSON.parse(tasksResponse[0]);
+			$.get(
+				rtm.getUrl('rtm.tasks.getList', { filter: 'status:incomplete' })
+			).done((data, textStatus, jqXHR) => {
+				const tasksJson = JSON.parse(data);
 
-					if (RTM_STATUS.FAIL === listsJson.rsp.stat || RTM_STATUS.FAIL === tasksJson.rsp.stat) {
-						dispatch({
-							...props,
-							error: `Error in data acquistion / Lists ${listsJson.rsp.err.msg} / Tasks ${tasksJson.rsp.err.msg}`,
-						});
-					} else {
-						const data  = [];
-						const lists = listsJson.rsp.lists.list;
-
-						for (const list of tasksJson.rsp.tasks.list) {
-							const name = lists.filter((element) => {
-								return list.id === element.id;
-							})[0].name;
-
-							const taskSeries = [];
-
-							for (const task of list.taskseries) {
-								const due = (() => {
-									if (task.task[0].due && 'string' === typeof task.task[0].due && 0 < task.task[0].due.length) {
-										return new Date(task.task[0].due);
-									} else {
-										return undefined;
-									}
-								})();
-
-								if (due) {
-									const year      = `${due.getFullYear().toString()}${DESCRIPTION.DATE.YEAR}`;
-									const month     = `${(due.getMonth() + 1).toString().padStart(2, '0')}${DESCRIPTION.DATE.MONTH}`;
-									const date      = `${due.getDate().toString().padStart(2, '0')}${DESCRIPTION.DATE.DAY}`;
-									const hour      = `${due.getHours().toString().padStart(2, '0')}${DESCRIPTION.DATE.HOUR}`;
-									const minutes   = `${due.getMinutes().toString().padStart(2, '0')}${DESCRIPTION.DATE.MINUTES}`;
-	
-									let   className = (() => {
-										let   className = undefined
-										const now       = new Date();
-										const red       = new Date(due.getTime()).setHours(-RED_ZONE);
-										const yellow    = new Date(due.getTime()).setHours(-YELLOW_ZONE);
-	
-										if (yellow <= now) {
-											className = 'yellow-zone';
-										}
-	
-										if (red <= now) {
-											className = 'red-zone';
-										}
-	
-										return className;
-									})();
-	
-									taskSeries.push(
-										<Component.Molecuels.Task
-											className   = { className }
-											key         = { task.name }
-											description = { task.name }
-											deadline    = { `${year}${month}${date}${hour}${minutes}` }
-										/>
-									);
-								} else {
-									taskSeries.push(
-										<Component.Molecuels.Task
-											className   = { className }
-											key         = { task.name }
-											description = { task.name }
-										/>
-									);
-								}
-							}
-
-							data.push({ name: name, tasks: taskSeries });
-						}
-
-						dispatch({
-							...props,
-							data: data,
-						});
-					}
+				if (RTM_STATUS.OK === tasksJson.rsp.stat) {
+					dispatch({ ...props, data:  assembly(tasksJson.rsp.tasks.list) });
+				} else {
+					dispatch({ ...props, error: tasksJson.rsp.err.msg });
 				}
-			).fail(
-				(lists, tasks) => {
-					dispatch({
-						...props,
-						error: `Error in data acquistion / Lists ${Array.isArray(lists) && lists.indexOf(2) ? lists[2] : ''} / Tasks ${Array.isArray(tasks) && tasks.indexOf(2) ? tasks[2] : ''}`,
-					});
-				}
-			);
+			}).fail((jqXHR, textStatus, errorThrown) => {
+				dispatch({ ...props, error: errorThrown });
+			});
 		} else {
 			authentication(
 				props.rtm,
@@ -334,12 +258,131 @@ function getTasks(rtm, props, dispatch){
 				dispatch
 			);
 		}
-	}).fail(
-		(jqXHR, textStatus, errorThrown) => {
-			dispatch({
-				...props,
-				error: errorThrown,
-			});
+	}).fail((jqXHR, textStatus, errorThrown) => {
+		dispatch({ ...props, error: errorThrown });
+	});
+}
+
+function assembly(lists) {
+	return refill(...collect(lists));
+}
+
+function collect(lists) {
+	const timeline   = {};
+	const indefinite = [];
+
+	for (const list of lists) {
+		for (const task of list.taskseries) {
+			const due = (() => {
+				if (task.task[0].due && 'string' === typeof task.task[0].due && 0 < task.task[0].due.length) {
+					return new Date(task.task[0].due);
+				} else {
+					return undefined;
+				}
+			})();
+
+			if (due) {
+				const key = `${due.getFullYear().toString()}-${(due.getMonth() + 1).toString().padStart(2, '0')}-${due.getDate().toString().padStart(2, '0')}`;
+	
+				if (!(key in timeline)) {
+					timeline[key] = {};
+				}
+
+				if (!(due in timeline[key])) {
+					timeline[key][due] = [];
+				}
+
+				timeline[key][due].push(task.name);
+			} else {
+				indefinite.push(task.name);
+			}
 		}
+	}
+
+	return [timeline, indefinite];	
+}
+
+function refill(timeline, indefinite) {
+	const data       = [];
+	const now        = new Date();
+	const toDay      = `${now.getFullYear().toString()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}`;
+	const toDayTime  = new Date(toDay);
+	let   redZone    = false;
+	let   yellowZone = false;
+
+	if (!(toDay in timeline)) {
+		timeline[toDay] = {};
+	}
+
+	Object.keys(timeline).sort().reverse().forEach((key) => {
+		const date       = new Date(key);
+		const headline   = (() => {
+			if (toDayTime.getTime() === date.getTime()) {
+				return (
+					DESCRIPTION.TODAY_FORMAT
+						.replace('$YEAR',  toDayTime.getFullYear().toString())
+						.replace('$MONTH', (toDayTime.getMonth() + 1).toString().padStart(2, '0'))
+						.replace('$DATE',  toDayTime.getDate().toString().padStart(2, '0'))
+				);
+			} else {
+				return (
+					DESCRIPTION.DATE_FORMAT
+						.replace('$YEAR',  date.getFullYear().toString())
+						.replace('$MONTH', (date.getMonth() + 1).toString().padStart(2, '0'))
+						.replace('$DATE',  date.getDate().toString().padStart(2, '0'))
+				);
+			}
+		})();
+
+		const datetimes  = {};
+
+		Object.keys(timeline[key]).sort().forEach((datetime) => {
+			const time  = new Date(datetime);
+			const index = DESCRIPTION.TIME_FORMAT
+							.replace('$HOURS',   (0 === time.getHours() ? 24 : time.getHours()).toString().padStart(2, '0'))
+							.replace('$MINUTES', time.getMinutes().toString().padStart(2, '0'));
+
+			datetimes[index] = timeline[key][datetime].sort();
+		});
+
+		const record     = { headline: headline, datetimes: datetimes };
+
+		const color      = (() => {
+			const color = {};
+
+			if (redZone || yellowZone) {
+				color.line = redZone ? 'red' : 'yellow';
+			}
+
+			if (0 < Object.keys(datetimes).length) {
+				const yellow = new Date(date.getTime());
+				const red    = new Date(date.getTime());
+		
+				yellow.setDate(date.getDate() - YELLOW_ZONE);
+				red.setDate(date.getDate() - RED_ZONE);
+	
+				if (red <= now) {
+					color.other = 'red';
+					redZone     = true;
+				} else if (yellow <= now) {
+					color.other = 'yellow';
+					yellowZone  = true;
+				}
+			}
+
+			return 0 < Object.keys(color).length ? color : undefined;
+		})();
+
+		if (color) {
+			record.color = color;
+		}
+
+		data.push(record);
+	});
+
+	return data.reverse().concat(
+		0 < indefinite.length
+			? [{ headline: DESCRIPTION.UNDECIDED.DATE, datetimes: indefinite }]
+			: []
 	);
 }
