@@ -153,7 +153,9 @@ export const render           = (props, dispatch) => {
 
 			if (0 === Object.keys(data).length) {
 				main = (
-					<Component.Molecuels.Information>
+					<Component.Molecuels.Information
+						className = { `blue` }
+					>
 						{ DESCRIPTION.NO_DATA }
 					</Component.Molecuels.Information>
 				);
@@ -264,7 +266,7 @@ function getTasks(rtm, props, dispatch){
 }
 
 function assembly(lists) {
-	return refill(...collect(lists));
+	return lists ? refill(...collect(lists)) : [];
 }
 
 function collect(lists) {
