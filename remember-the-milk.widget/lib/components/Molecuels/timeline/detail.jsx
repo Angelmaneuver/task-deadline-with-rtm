@@ -6,11 +6,10 @@ import {
 }                    from './index.jsx';
 
 const Detail     = ({ className, color, style, datetimes }) => {
-	const keys          = Object.keys(datetimes);
 	const [line, other] = getColorSetting(color);
 
 	return (
-		0 === keys.length ? (
+		0 === datetimes.length ? (
 			<Atoms.Row
 				className = { `${ className ? className : '' } ${baseStyle({ ...style, alignItems: 'stretch' })}`.trim() }
 			>
@@ -22,10 +21,10 @@ const Detail     = ({ className, color, style, datetimes }) => {
 				/>
 			</Atoms.Row>
 		) : (
-			keys.map((key) => {
+			datetimes.map((time) => {
 				return (
 					<Atoms.Row
-						key       = { key }
+						key       = { time.time }
 						className = { `${ className ? className : '' } ${baseStyle({ ...style, alignItems: 'stretch' })}`.trim() }
 					>
 						<Atoms.CentralLine
@@ -33,14 +32,15 @@ const Detail     = ({ className, color, style, datetimes }) => {
 						/>
 						<Atoms.Row style = {{ padding: '0.3em', lineHeight: '1.5em' }}>
 							<Atoms.Time
-								time  = { key }
+								style = {{ minWidth: '5em' }}
+								time  = { time.time }
 								color = { other }
 							/>
 							<Atoms.Row
 								className = { `${emptyStyle({ ...style, flexDirection: 'column', paddingLeft: '1em' })}`.trim() }
 								>
 								<Task
-									tasks = { datetimes[key] }
+									tasks = { time.tasks }
 									color = { other }
 								/>
 							</Atoms.Row>

@@ -336,7 +336,7 @@ function refill(timeline, indefinite) {
 			}
 		})();
 
-		const datetimes  = {};
+		const datetimes  = [];
 
 		Object.keys(timeline[key]).sort().forEach((datetime) => {
 			const time  = new Date(datetime);
@@ -344,7 +344,10 @@ function refill(timeline, indefinite) {
 							.replace('$HOURS',   (0 === time.getHours() ? 24 : time.getHours()).toString().padStart(2, '0'))
 							.replace('$MINUTES', time.getMinutes().toString().padStart(2, '0'));
 
-			datetimes[index] = timeline[key][datetime].sort();
+			datetimes.push({
+				time:  index,
+				tasks: timeline[key][datetime].sort(),
+			});
 		});
 
 		const record     = { headline: headline, datetimes: datetimes };
@@ -382,9 +385,17 @@ function refill(timeline, indefinite) {
 		data.push(record);
 	});
 
-	return data.reverse().concat(
-		0 < indefinite.length
-			? [{ headline: DESCRIPTION.UNDECIDED.DATE, datetimes: indefinite }]
-			: []
-	);
+	if (0 < indefinite.length) {
+		data.unshift({
+			headline:  DESCRIPTION.UNDECIDED.DATE,
+			datetimes: [{
+				time:  DESCRIPTION.UNDECIDED.TIME,
+				tasks: indefinite,
+			}],
+		});
+	}
+
+
+
+	return data.reverse();
 }
