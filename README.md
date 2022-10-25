@@ -8,8 +8,8 @@ This widget is not an official Remember the Milk application. If you encounter a
 
 ## Prerequisites
  - [Übersicht](http://tracesof.net/uebersicht/)
- - [remember the milk account](https://www.rememberthemilk.com/)
- - [remember the milk API Key](https://www.rememberthemilk.com/services/api/)
+ - [Remember the Milk account](https://www.rememberthemilk.com/)
+ - [Remember the Milk API Key](https://www.rememberthemilk.com/services/api/)
 
 ## Getting Started
 ### 1. Open Widgets folder
