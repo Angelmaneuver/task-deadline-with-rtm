@@ -366,10 +366,10 @@ function refill(timeline, indefinite) {
 				yellow.setDate(date.getDate() - YELLOW_ZONE);
 				red.setDate(date.getDate() - RED_ZONE);
 	
-				if (red <= now) {
+				if (red.getTime() <= toDayTime.getTime()) {
 					color.other = 'red';
 					redZone     = true;
-				} else if (yellow <= now) {
+				} else if (yellow.getTime() <= toDayTime.getTime()) {
 					color.other = 'yellow';
 					yellowZone  = true;
 				}
@@ -394,8 +394,6 @@ function refill(timeline, indefinite) {
 			}],
 		});
 	}
-
-
 
 	return data.reverse();
 }

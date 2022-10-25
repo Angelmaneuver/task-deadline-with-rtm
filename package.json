@@ -5,7 +5,8 @@
 	"license": "MIT",
 	"description": "Library for remember the milk.",
 	"scripts": {
-		"build": "webpack --mode production"
+		"build": "webpack --mode production",
+		"package": "zip -r task-deadline-with-rtm.widget.zip task-deadline-with-rtm.widget"
 	},
 	"devDependencies": {
 		"@svgr/cli": "^6.5.0",
