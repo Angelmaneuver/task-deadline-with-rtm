@@ -4,7 +4,7 @@ This is a Übersicht widget that displays your tasks deadline. It allows you to 
 ![Screen Shot](./screenshot.png)
 
 ## Caution
-This widget is not an official Remember the Milk application. If you encounter any ploblems, please report them here.
+This widget is not an official Remember the Milk application. If you encounter any ploblems, please report them [here](https://github.com/Angelmaneuver/task-deadline-with-rtm/issues).
 
 ## Prerequisites
  - [Übersicht](http://tracesof.net/uebersicht/)
