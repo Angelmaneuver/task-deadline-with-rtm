@@ -7,6 +7,10 @@ const EN = {
 		TIME:        '',
 	},
 	STARTUP:      'Starting up...',
+	ATTRIBUTION:  {
+		'1':         'Attribution',
+		'2':         'This product uses the Remember The Milk API but is not endorsed or certified by Remember The Milk.',
+	},
 	SETUP:        {
 		INFORMATION: 'Setup Procedure',
 		STEP1:       {
@@ -35,6 +39,10 @@ const JA = {
 		TIME:        '',
 	},
 	STARTUP:      '起動中です...',
+	ATTRIBUTION:  {
+		'1':         '帰属',
+		'2':         '本製品は Remember The Milk API を使用していますが、Remember The Milk が推奨または認定しているものではありません。',
+	},
 	SETUP:        {
 		INFORMATION: 'セットアップ手順',
 		STEP1:       {

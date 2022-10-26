@@ -15,7 +15,7 @@ const baseStyle   = (style) => css`
 	position:        relative;
 	height:          100vh;
 
-	div {
+	& > div {
 		position:    absolute;
 		top:         50%;
 		left:        50%;

@@ -6,6 +6,7 @@ const Setup = ({
 	style,
 	information,
 	message,
+	attribution,
 	step1,
 	step2,
 }) => {
@@ -36,6 +37,30 @@ const Setup = ({
 					}}
 				>
 					{ message }
+				</div>
+			) : (``) }
+			{ (attribution && '1' in attribution && '2' in attribution) ? (
+				<div
+					style = {{
+						fontSize:        '0.9em',
+						width:           '90%',
+						padding:         '0.25em',
+						margin:          '1.5em 0 0 0',
+						color:           'rgba(244,251,254,.9)',
+					}}
+				>
+					<Atoms.Row
+						style = {{
+							flexDirection: 'column',
+						}}
+					>
+						<div>
+							{ attribution[1] }
+						</div>
+						<div>
+							{ attribution[2] }
+						</div>
+					</Atoms.Row>
 				</div>
 			) : (``) }
 			<div

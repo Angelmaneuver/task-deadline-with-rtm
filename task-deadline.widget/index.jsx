@@ -94,7 +94,19 @@ export const render           = (props, dispatch) => {
 				<Component.Molecuels.Information
 					className = { `blue` }
 				>
-					{ DESCRIPTION.STARTUP }
+					<Component.Atoms.Row
+						style = {{
+							flexDirection: 'column',
+						}}
+					>
+						<div
+							style = {{
+								textAlign:    'center',
+								marginBottom: '1em',
+							}}
+						>{ DESCRIPTION.STARTUP }</div>
+						<div>{ DESCRIPTION.ATTRIBUTION[2] }</div>
+					</Component.Atoms.Row>
 				</Component.Molecuels.Information>
 			);
 		} else if (STATUS.SETUP === props.type) {
@@ -102,6 +114,10 @@ export const render           = (props, dispatch) => {
 				<Component.Molecuels.Setup
 					information = {{ text: DESCRIPTION.SETUP.INFORMATION }}
 					message     = { 'message' in props ? props.message : undefined }
+					attribution = {{
+						'1':     DESCRIPTION.ATTRIBUTION[1],
+						'2':     DESCRIPTION.ATTRIBUTION[2],
+					}}
 					step1       = {{
 						'1':     DESCRIPTION.SETUP.STEP1[1],
 						'2':     DESCRIPTION.SETUP.STEP1[2],
