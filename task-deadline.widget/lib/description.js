@@ -15,7 +15,7 @@ const EN = {
 		INFORMATION: 'Setup Procedure',
 		STEP1:       {
 			'1':    `Step.1`,
-			'2':    `Copy the following URL into your browser (⌘ + c) to access the Remember the Milk official site and allow access to your account.`,
+			'2':    `Copy (⌘ + c) the following URL into your browser to access the Remember The Milk official site and allow access to your account.`,
 		},
 		STEP2:       {
 			'1':    `Step.2`,
@@ -47,7 +47,7 @@ const JA = {
 		INFORMATION: 'セットアップ手順',
 		STEP1:       {
 			'1':    `Step.1`,
-			'2':    `以下の URL をブラウザにコピー (⌘ + c) して remember the milk 公式サイトにアクセスし、貴方のアカウントへのアクセスを許可してください。`,
+			'2':    `以下の URL をブラウザにコピー (⌘ + c) して Remember The Milk 公式サイトにアクセスし、貴方のアカウントへのアクセスを許可してください。`,
 		},
 		STEP2:       {
 			'1':    `Step.2`,
