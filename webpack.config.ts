@@ -6,7 +6,7 @@ module.exports = {
         libraries: './src/index.ts'
     },
     output: {
-        path:          path.join(__dirname, 'task-deadline-with-rtm.widget', 'lib'),
+        path:          path.join(__dirname, 'task-deadline.widget', 'lib'),
         filename:      'libraries.bundle.js',
         library:       'Libraries',
         libraryTarget: 'umd'
