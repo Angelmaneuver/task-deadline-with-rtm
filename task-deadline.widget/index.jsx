@@ -385,6 +385,10 @@ function refill(timeline, indefinite) {
 				if (red.getTime() <= toDayTime.getTime()) {
 					color.other = 'red';
 					redZone     = true;
+
+					if (date.getTime() <= toDayTime.getTime()) {
+						color.line = 'red';
+					}
 				} else if (yellow.getTime() <= toDayTime.getTime()) {
 					color.other = 'yellow';
 					yellowZone  = true;
