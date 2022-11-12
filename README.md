@@ -42,6 +42,4 @@ This widget incorporates and uses the following libraries or materials.
  - [Window, maximize icon (Font Awesome)](https://www.iconfinder.com/icons/8542583/window_maximize_icon)
 
 ## Support
-<iframe src="https://github.com/sponsors/Angelmaneuver/card" title="Sponsor Angelmaneuver" height="225" width="600" style="border: 0;"></iframe>
-
 <a href="https://www.buymeacoffee.com/Angelmaneuver"> <img align="left" src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="50" width="210" alt="Angelmaneuver" /></a>
