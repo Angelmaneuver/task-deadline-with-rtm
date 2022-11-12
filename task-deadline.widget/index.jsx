@@ -11,6 +11,8 @@ const DESCRIPTION             = Language.EN;
 const RED_ZONE                = 2;
 const YELLOW_ZONE             = 7;
 
+const width                   = '55vw';
+
 export const className        = `
 	top:        0;
 	left:       0;
@@ -24,7 +26,7 @@ export const className        = `
 const mainStyle               = {
 	minHeight:     '58vh',
 	maxHeight:     '58vh',
-	width:         '55vw',
+	width:         `'${width}'`,
 	padding:       '1em',
 	margin:        '0.3em',
 
@@ -39,6 +41,7 @@ const STATUS                  = {
 	SETUP:         'RTL/SETUP',
 	SETUP_SUCCESS: 'RTL/SETUP_SUCCESS',
 	ACTIVE:        'RTL/ACTIVE',
+	MINIMIZE:      'RTL/MINIMIZE',
 };
 
 const RTM_STATUS              = {
@@ -112,6 +115,7 @@ export const render           = (props, dispatch) => {
 		} else if (STATUS.SETUP === props.type) {
 			main = (
 				<Component.Molecuels.Setup
+					style       = {{ width: width }}
 					information = {{ text: DESCRIPTION.SETUP.INFORMATION }}
 					message     = { 'message' in props ? props.message : undefined }
 					attribution = {{
@@ -156,6 +160,7 @@ export const render           = (props, dispatch) => {
 		} else if (STATUS.SETUP_SUCCESS === props.type) {
 			main = (
 				<Component.Molecuels.Setup
+					style       = {{ width: width }}
 					information = {{ text: DESCRIPTION.SETUP.INFORMATION }}
 					step1       = {{
 						'1':     DESCRIPTION.SETUP.STEP3[1],
@@ -205,11 +210,14 @@ export const render           = (props, dispatch) => {
 
 	return (
 		<div>
-			<Component.Molecuels.Reload
-				onClickReload = { () => { init(dispatch); } }
+			<Component.Molecuels.Buttons
+				style           = {{ width: width }}
+				onClickMinimize = { STATUS.ACTIVE   === props.type ? (() => dispatch({ type: STATUS.MINIMIZE })) : undefined }
+				onClickMaximize = { STATUS.MINIMIZE === props.type ? (() => dispatch({ type: STATUS.ACTIVE   })) : undefined }
+				onClickReload   = { () => init(dispatch) }
 			/>
 			<Component.Atoms.Row
-				style = { mainStyle }
+				style = {{ ...mainStyle, display: STATUS.MINIMIZE === props.type ? 'none' : 'flex' }}
 			>
 				{ main }
 			</Component.Atoms.Row>
