@@ -11,7 +11,8 @@ const DESCRIPTION             = Language.EN;
 const RED_ZONE                = 2;
 const YELLOW_ZONE             = 7;
 
-const width                   = '55vw';
+const normalWidth             = '55vw';
+const minimizedWidth          = '55vw';
 
 export const className        = `
 	top:        0;
@@ -224,7 +225,7 @@ export const render           = (props, dispatch) => {
 	return (
 		<div
 			style = {{
-				width: width
+				width: STATUS.MINIMIZE === props.type ? minimizedWidth : normalWidth
 			}}
 		>
 			<Component.Molecuels.Toolbar
