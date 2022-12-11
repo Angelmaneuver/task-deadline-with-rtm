@@ -76,7 +76,7 @@ export const init             = (dispatch) => {
 	if ('string' === typeof AUTH_TOKEN && 0 < AUTH_TOKEN.length) {
 		rtm.authToken = AUTH_TOKEN;
 
-		return getTasks(rtm, { type: STATUS.ACTIVE, ...props }, dispatch);
+		return getTasks(rtm, props, dispatch);
 	}
 
 	return authentication(rtm, { type: STATUS.SETUP,  ...props }, dispatch);
@@ -85,6 +85,11 @@ export const init             = (dispatch) => {
 export const updateState      = (event, previousState) => {
 	if (event.error) {
 		return { ...previousState, warning: `We got an error: ${event.error}` };
+	} else if (
+		 ('type' in previousState && STATUS.STARTUP === previousState['type']) &&
+		!('type' in event)
+	) {
+		event['type'] = STATUS.ACTIVE;
 	}
 
 	return { ...previousState, ...event };
