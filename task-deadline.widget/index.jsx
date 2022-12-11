@@ -26,7 +26,6 @@ export const className        = `
 const mainStyle               = {
 	minHeight:     '58vh',
 	maxHeight:     '58vh',
-	width:         `'${width}'`,
 	padding:       '1em',
 	margin:        '0.3em',
 
@@ -53,7 +52,18 @@ export const command          = undefined;
 
 export const refreshFrequency = false;
 
-export const initialState     = { type: STATUS.STARTUP };
+export const initialState     = {
+	type:    STATUS.STARTUP,
+	outline: {
+		color:  'blue',
+		number: {
+			blue:   0,
+			yellow: 0,
+			red:    0,
+		},
+		list:   [],
+	},
+};
 
 export const init             = (dispatch) => {
 	const [rtm, error] = getRtmInstance(API_KEY, API_SECRET);
@@ -115,7 +125,6 @@ export const render           = (props, dispatch) => {
 		} else if (STATUS.SETUP === props.type) {
 			main = (
 				<Component.Molecuels.Setup
-					style       = {{ width: width }}
 					information = {{ text: DESCRIPTION.SETUP.INFORMATION }}
 					message     = { 'message' in props ? props.message : undefined }
 					attribution = {{
@@ -160,7 +169,6 @@ export const render           = (props, dispatch) => {
 		} else if (STATUS.SETUP_SUCCESS === props.type) {
 			main = (
 				<Component.Molecuels.Setup
-					style       = {{ width: width }}
 					information = {{ text: DESCRIPTION.SETUP.INFORMATION }}
 					step1       = {{
 						'1':     DESCRIPTION.SETUP.STEP3[1],
@@ -209,9 +217,14 @@ export const render           = (props, dispatch) => {
 	}
 
 	return (
-		<div>
-			<Component.Molecuels.Buttons
-				style           = {{ width: width }}
+		<div
+			style = {{
+				width: width
+			}}
+		>
+			<Component.Molecuels.Toolbar
+				outline         = { props.outline }
+				outlineFormat   = { DESCRIPTION.OUTLINE_FORMAT }
 				onClickMinimize = { STATUS.ACTIVE   === props.type ? (() => dispatch({ type: STATUS.MINIMIZE })) : undefined }
 				onClickMaximize = { STATUS.MINIMIZE === props.type ? (() => dispatch({ type: STATUS.ACTIVE   })) : undefined }
 				onClickReload   = { () => init(dispatch) }
@@ -270,7 +283,9 @@ function getTasks(rtm, props, dispatch){
 				const tasksJson = JSON.parse(data);
 
 				if (RTM_STATUS.OK === tasksJson.rsp.stat) {
-					dispatch({ ...props, data:  assembly(tasksJson.rsp.tasks.list) });
+					const [outline, data] = assembly(tasksJson.rsp.tasks.list);
+
+					dispatch({ ...props, outline: outline, data: data });
 				} else {
 					dispatch({ ...props, error: tasksJson.rsp.err.msg });
 				}
@@ -290,7 +305,22 @@ function getTasks(rtm, props, dispatch){
 }
 
 function assembly(lists) {
-	return lists ? refill(...collect(lists)) : [];
+	return (
+		lists
+			? refill(...collect(lists))
+			: [
+				{
+					color:  'blue',
+					number: {
+						blue:   0,
+						yellow: 0,
+						red:    0,
+					},
+					list:   [],
+				},
+				[]
+			]
+	);
 }
 
 function collect(lists) {
@@ -329,6 +359,15 @@ function collect(lists) {
 }
 
 function refill(timeline, indefinite) {
+	const outline    = {
+		color:  'blue',
+		number: {
+			blue:   0,
+			yellow: 0,
+			red:    0,
+		},
+		list:   [],
+	};
 	const data       = [];
 	const now        = new Date();
 	const toDay      = `${now.getFullYear().toString()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}`;
@@ -359,8 +398,9 @@ function refill(timeline, indefinite) {
 				);
 			}
 		})();
-
 		const datetimes  = [];
+
+		const temporary  = { date: headline, tasks: [] };
 
 		Object.keys(timeline[key]).sort().forEach((datetime) => {
 			const time  = new Date(datetime);
@@ -372,6 +412,8 @@ function refill(timeline, indefinite) {
 				time:  index,
 				tasks: timeline[key][datetime].sort(),
 			});
+
+			temporary.tasks = temporary.tasks.concat(timeline[key][datetime].sort());
 		});
 
 		const record     = { headline: headline, datetimes: datetimes };
@@ -411,6 +453,18 @@ function refill(timeline, indefinite) {
 		}
 
 		data.push(record);
+
+		outline.list.push(temporary);
+
+		if (redZone) {
+			outline.number.red += temporary.tasks.length;
+			outline.color = 'red';
+		} else if (yellowZone) {
+			outline.number.yellow += temporary.tasks.length;
+			outline.color = 'yellow';
+		} else {
+			outline.number.blue += temporary.tasks.length;
+		}
 	});
 
 	if (0 < indefinite.length) {
@@ -421,7 +475,16 @@ function refill(timeline, indefinite) {
 				tasks: indefinite,
 			}],
 		});
+
+		outline.list.unshift({
+			date:  DESCRIPTION.UNDECIDED.DATE,
+			tasks: indefinite
+		});
+
+		outline.number.blue += indefinite.length;
 	}
 
-	return data.reverse();
+	outline.list = outline.list.reverse();
+
+	return [outline, data.reverse()];
 }

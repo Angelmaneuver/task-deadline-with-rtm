@@ -28,6 +28,11 @@ const EN = {
 		},
 	},
 	NO_DATA:      'Congratulations ! No tasks have not been completed !',
+	OUTLINE_FORMAT:  {
+		SUMMARY:    `Delayed $RED tasks, Attention care required $YELLOW task, No problem $BLUE tasks`,
+		DAY:        `$DATE $TASKS tasks`,
+		TASK:       ` ・$TASK`,
+	},
 }
 
 const JA = {
@@ -60,6 +65,11 @@ const JA = {
 		},
 	},
 	NO_DATA:      'おめでとうございます ! 未達成のタスクはありません !',
+	OUTLINE_FORMAT:  {
+		SUMMARY:    `遅延 $RED 件, 要注意 $YELLOW 件, 問題無し $BLUE 件`,
+		DAY:        `$DATE $TASKS 件`,
+		TASK:       ` ・$TASK`,
+	},
 }
 
 export {

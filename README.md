@@ -1,7 +1,12 @@
 # Task Deadline
 This is a Übersicht widget that displays your tasks deadline. It allows you to display the due dates of tasks managed by [Remember the Milk](https://www.rememberthemilk.com/) on your desktop.
 
-![Screen Shot](./resource/screenshot.png)
+## Screen Shot
+### Nomal Mode
+![Screen Shot1](./resource/screenshot1.png)
+
+### Minimize Mode
+![Screen Shot2](./resource/screenshot2.png)
 
 ## Attribution
 This product uses the Remember The Milk API but is not endorsed or certified by Remember The Milk.
