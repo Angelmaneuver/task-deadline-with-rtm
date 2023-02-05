@@ -16,7 +16,9 @@ If you encounter any ploblems, please report them [here](https://github.com/Ange
 ## Prerequisites
  - [Übersicht](http://tracesof.net/uebersicht/)
  - [Remember the Milk account](https://www.rememberthemilk.com/)
- - [Remember the Milk API Key](https://www.rememberthemilk.com/services/api/)
+ - ~~[Remember the Milk API Key](https://www.rememberthemilk.com/services/api/)~~ \*
+
+\* No longer mandatory.
 
 ## Getting Started
 ### 1. Open Widgets folder
@@ -27,7 +29,19 @@ If you encounter any ploblems, please report them [here](https://github.com/Ange
 
 ### 3. Setup
 ![getting started](./resource/getting%20started.png)
- > Set the API Key obtained from Remember the Milk to a variable in JavaScript of this widget. Then follow the on-screen instructions to grant access to your account.
+ > ~~Set the API Key obtained from Remember the Milk to a variable in JavaScript of this widget.~~ \* Then follow the on-screen instructions to grant access to your account.
+
+\* No longer mandatory.
+
+#### Setting Parameters (/task-deadline.widget/index.jsx)
+| Name | Required | Description | Remark |
+| :--- | :------: | :---------- | :----- |
+| API_KEY | - | Set when you want to use an API Key that you have. | |
+| API_SECRET | - | Set when you want to use an API Secret that you have. | |
+| AUTH_TOKEN | ○ | Set the token obtained in the setup. | |
+| DESCRIPTION | ○ | Set the language to be displayed. | EN:English<br>JA:Japanese |
+| RED_ZONE | ○ | Set the number of days for which tasks with imminient deadlines are displayed in red. | |
+| YELLOW_ZONE | ○ | Set the number of days for which tasks with imminient deadlines are displayed in yellow. | |
 
 ### 4. Configure widget possition
  > Adjust widget possition as needed.

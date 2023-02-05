@@ -1,4 +1,4 @@
-import { RTM }        from './lib/libraries.bundle';
+import * as RTM       from './lib/swift/rtm';
 import * as Language  from './lib/description';
 import * as Component from './lib/components';
 
@@ -67,14 +67,12 @@ export const initialState     = {
 };
 
 export const init             = (dispatch) => {
-	const [rtm, error] = getRtmInstance(API_KEY, API_SECRET);
+	const [rtm, error] = RTM.getRtmInstance(API_KEY, API_SECRET);
 	const props        = { rtm: rtm };
 
 	if (error) {
 		return dispatch({ error: error.message });
-	}
-
-	if ('string' === typeof AUTH_TOKEN && 0 < AUTH_TOKEN.length) {
+	} else if ('string' === typeof AUTH_TOKEN && 0 < AUTH_TOKEN.length) {
 		rtm.authToken = AUTH_TOKEN;
 
 		return getTasks(rtm, props, dispatch);
@@ -146,9 +144,9 @@ export const render           = (props, dispatch) => {
 						'1':     DESCRIPTION.SETUP.STEP2[1],
 						'2':     DESCRIPTION.SETUP.STEP2[2],
 						text:    DESCRIPTION.SETUP.STEP2.text,
-						onClick: () => {
+						onClick: async () => {
 							$.get(
-								props.rtm.getUrl('rtm.auth.getToken', { frob: props.frob })
+								await RTM.getTokenURL(props.rtm, props.frob).catch((error) => { dispatch({ error: error }); throw error; })
 							).done(
 								(data, textStatus, jqXHR) => {
 									const json   = JSON.parse(data);
@@ -244,25 +242,17 @@ export const render           = (props, dispatch) => {
 	);
 }
 
-function getRtmInstance(apiKey, apiSecret) {
-	try {
-		return [new RTM(apiKey, apiSecret), undefined];
-	} catch (e) {
-		return [undefined, e];
-	}
-}
-
-function authentication(rtm, props, dispatch) {
+async function authentication(rtm, props, dispatch) {
 	$.get(
-		rtm.getUrl('rtm.auth.getFrob')
+		await RTM.getFrobURL(rtm).catch((error) => { dispatch({ error: error }); throw error; })
 	).done(
-		(data, textStatus, jqXHR) => {
+		async (data, textStatus, jqXHR) => {
 			const json   = JSON.parse(data);
 			const append = {};
 
 			if (RTM_STATUS.OK === json.rsp.stat) {
 				append['frob']    = json.rsp.frob;
-				append['authUrl'] = rtm.getAuthUrl(json.rsp.frob);
+				append['authUrl'] = await RTM.getAuthURL(rtm, json.rsp.frob).catch((error) => { dispatch({ error: error }); throw error; });
 			} else {
 				append['error']   = json.rsp.err.msg;
 			}
@@ -276,15 +266,15 @@ function authentication(rtm, props, dispatch) {
 	);
 }
 
-function getTasks(rtm, props, dispatch){
+async function getTasks(rtm, props, dispatch){
 	$.get(
-		rtm.getUrl('rtm.auth.checkToken')
-	).done((data, textStatus, jqXHR) => {
+		await RTM.getCheckTokenURL(rtm).catch((error) => { dispatch({ error: error }); throw error; })
+	).done(async (data, textStatus, jqXHR) => {
 		const checkToken = JSON.parse(data);
 
 		if (RTM_STATUS.OK === checkToken.rsp.stat) {
 			$.get(
-				rtm.getUrl('rtm.tasks.getList', { filter: 'status:incomplete' })
+				await RTM.getListURL(rtm).catch((error) => { dispatch({ error: error }); throw error; })
 			).done((data, textStatus, jqXHR) => {
 				const tasksJson = JSON.parse(data);
 
